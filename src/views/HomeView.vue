@@ -1,18 +1,67 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div class="hero">
+    <SwitcherView @switchToCats="switchFilter" />
+    <FormView @addAnimal="addAnimal" />
+    <AnimalList :animals="animals" @removeById="removeFromList" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import AnimalList from "@/components/AnimalList/AnimalList.vue";
+import FormView from "@/components/FormView/FormView.vue";
+import SwitcherView from "@/components/Switcher/Switcher.vue";
+import "./homeView.scss";
 
+export type Animal = {
+  id: number;
+  name: string;
+  species: string;
+};
 export default defineComponent({
   name: "HomeView",
+  data: () => ({
+    animals: [] as Animal[],
+  }),
   components: {
-    HelloWorld,
+    SwitcherView,
+    FormView,
+    AnimalList,
+  },
+  created() {
+    this.animals = JSON.parse(localStorage.getItem("animals") || "[]");
+  },
+  methods: {
+    addAnimal(animalName: string, animalSpecie: string) {
+      const newAnimals = [
+        ...this.animals,
+        {
+          id: this.animals.length + 1,
+          name: animalName,
+          species: animalSpecie,
+        },
+      ];
+      this.animals = newAnimals;
+    },
+    removeFromList(index: number) {
+      const newAnimals = [...this.animals];
+      newAnimals.splice(index, 1);
+      this.animals = newAnimals;
+    },
+    switchFilter(switcher: boolean) {
+      if (switcher) {
+        return this.animals.filter(
+          (animal: Animal) => animal.species === "cat"
+        );
+      } else {
+        return this.animals;
+      }
+    },
+  },
+  watch: {
+    animals(newAnimals) {
+      localStorage.setItem("animals", JSON.stringify(newAnimals));
+    },
   },
 });
 </script>
