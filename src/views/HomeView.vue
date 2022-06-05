@@ -2,7 +2,7 @@
   <div class="hero">
     <SwitcherView @switchToCats="switchFilter" />
     <FormView @addAnimal="addAnimal" />
-    <AnimalList :animals="animals" @removeById="removeFromList" />
+    <AnimalList :animals="animalsToShow" @removeById="removeFromList" />
   </div>
 </template>
 
@@ -18,10 +18,12 @@ export type Animal = {
   name: string;
   species: string;
 };
+
 export default defineComponent({
   name: "HomeView",
   data: () => ({
     animals: [] as Animal[],
+    onlyCatsVisible: false,
   }),
   components: {
     SwitcherView,
@@ -30,6 +32,15 @@ export default defineComponent({
   },
   created() {
     this.animals = JSON.parse(localStorage.getItem("animals") || "[]");
+  },
+  computed: {
+    animalsToShow() {
+      if (this.onlyCatsVisible) {
+        return this.animals.filter(({ species }) => species === "cat");
+      }
+
+      return this.animals;
+    },
   },
   methods: {
     addAnimal(animalName: string, animalSpecie: string) {
@@ -45,17 +56,13 @@ export default defineComponent({
     },
     removeFromList(index: number) {
       const newAnimals = [...this.animals];
+
       newAnimals.splice(index, 1);
+
       this.animals = newAnimals;
     },
     switchFilter(switcher: boolean) {
-      if (switcher) {
-        return this.animals.filter(
-          (animal: Animal) => animal.species === "cat"
-        );
-      } else {
-        return this.animals;
-      }
+      this.onlyCatsVisible = !switcher;
     },
   },
   watch: {

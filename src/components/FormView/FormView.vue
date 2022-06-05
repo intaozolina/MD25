@@ -3,7 +3,9 @@
     <form class="form" @submit.prevent="submitHandler">
       <input
         class="form__input"
+        ref="inputRef"
         type="text"
+        required
         placeholder="Add new animal ..."
         v-model="inputValue"
       />

@@ -4,8 +4,7 @@
       class="form-check-input"
       type="checkbox"
       id="flexSwitchCheckReverse"
-      @click="switchHandler"
-      checked="{{switched}}"
+      @change="switchHandler"
     />
     <label class="form-check-label" for="flexSwitchCheckReverse">Cats</label>
   </div>
